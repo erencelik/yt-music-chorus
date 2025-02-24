@@ -15,7 +15,7 @@ document.getElementById("toleranceValue").textContent = tolerance;
 document.getElementById("chorusDurationValue").textContent = chorusDuration;
 
 toleranceSlider.addEventListener("input", function () {
-  tolerange = this.value;
+  tolerance = this.value;
   document.getElementById("toleranceValue").textContent = this.value;
   saveToLocalStorage();
 });
