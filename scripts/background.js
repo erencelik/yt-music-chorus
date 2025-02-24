@@ -53,10 +53,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function enableExtension(tabId) {
   chrome.action.enable(tabId);
-  chrome.action.setIcon({ tabId: tabId, path: "../assets/icon.png" });
+  chrome.action.setIcon({ tabId: tabId, path: "../assets/icon128.png" });
 }
 
 function disableExtension(tabId) {
   chrome.action.disable(tabId);
-  chrome.action.setIcon({ tabId: tabId, path: "../assets/icon_disabled.png" });
+  chrome.action.setIcon({ tabId: tabId, path: "../assets/icon_disabled128.png" });
 }

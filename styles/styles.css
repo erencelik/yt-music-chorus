@@ -1,5 +1,6 @@
+/* Body */
 body {
-  width: 240px;
+  width: 320px;
   text-align: center;
   font-family: Arial, sans-serif;
   background-color: black;
@@ -8,6 +9,7 @@ body {
   margin: 0 auto;
 }
 
+/* Anchor */
 a {
   color: gray;
 }
@@ -16,9 +18,10 @@ a:hover {
   color: white;
 }
 
+/* Button */
 button {
   padding: 12px 24px;
-  font-size: 18px;
+  font-size: 1.3rem;
   font-weight: bold;
   color: white;
   background: black;
@@ -29,7 +32,6 @@ button {
   z-index: 1;
 }
 
-/* Animated gradient border using ::before */
 button::before {
   content: "";
   position: absolute;
@@ -43,7 +45,6 @@ button::before {
   z-index: -1;
 }
 
-/* Add an inner layer to cover the border inside */
 button::after {
   content: "";
   position: absolute;
@@ -57,13 +58,108 @@ button::after {
 }
 
 button:hover::before,
-.button-animated::before {
+.ytmc-button-animated::before {
   opacity: 1;
   animation: borderAnimation 1.5s linear infinite;
 }
 
-/* Gradient border movement animation */
-@keyframes borderAnimation {
+/* Input */
+input[type="range"] {
+  display: inline-flex;
+  width: 80%;
+  height: 10px;
+  margin: 16px 0;
+  accent-color: rgb(0, 255, 157);
+}
+
+/* App */
+.ytmc-app {
+  position: relative;
+  background: linear-gradient(0deg, #000, #141414);
+  padding: 16px 16px 32px 16px;
+}
+
+.ytmc-app:before,
+.ytmc-app:after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  background: linear-gradient(90deg, red, magenta, orange, yellow, orange, magenta, red);
+  background-size: 400%;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  z-index: -1;
+}
+
+.ytmc-app-animated,
+.ytmc-app-animated:before,
+.ytmc-app-animated:after {
+  animation: steam 10s linear infinite;
+}
+
+.ytmc-gradient-mask {
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  color: transparent;
+  /* Hide text color */
+  background: linear-gradient(155deg, red, magenta, orange, yellow, orange, magenta, red);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+.ytmc-gradient-mask .animated {
+  animation: gradientMove 8s linear infinite;
+}
+
+/* Title */
+.ytmc-title {
+  display: block;
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* Range Input Label */
+.ytmc-range-title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+/* Range Input Value */
+.ytmc-range-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Range Input Min Max Value */
+.ytmc-range-min-max {
+  font-size: 1.1em;
+  display: inline-flex;
+  color: lightgray;
+}
+
+/* Honk Font */
+.ytmc-honk {
+  font-family: "Honk", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "MORF" 15,
+    "SHLN" 50;
+}
+
+/* Animations */
+@keyframes gradientMove {
   0% {
     background-position: 0% 50%;
   }
@@ -75,25 +171,6 @@ button:hover::before,
   100% {
     background-position: 0% 50%;
   }
-}
-
-.box {
-  position: relative;
-  background: linear-gradient(0deg, #000, #141414);
-  padding: 16px;
-}
-
-.box:before,
-.box:after {
-  content: '';
-  position: absolute;
-  left: -1px;
-  top: -1px;
-  background: linear-gradient(90deg, red, magenta, orange, yellow, orange, magenta, red);
-  background-size: 400%;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  z-index: -1;
 }
 
 @keyframes steam {
@@ -110,47 +187,7 @@ button:hover::before,
   }
 }
 
-.box-animated,
-.box-animated:before,
-.box-animated:after {
-  animation: steam 10s linear infinite;
-}
-
-/* Define animation */
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.gradient-mask {
-  font-weight: bold;
-  text-decoration: none;
-  display: inline-block;
-  position: relative;
-  color: transparent;
-  /* Hide text color */
-  background: linear-gradient(155deg, red, magenta, orange, yellow, orange, magenta, red);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: all 0.3s ease-in-out;
-}
-
-.gradient-mask .animated {
-  animation: gradientMove 8s linear infinite;
-}
-
-/* Gradient movement animation */
-@keyframes gradientMove {
+@keyframes borderAnimation {
   0% {
     background-position: 0% 50%;
   }

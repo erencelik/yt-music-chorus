@@ -5,24 +5,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YouTube Music Chorus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Honk&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/styles.css">
 </head>
 
 <body>
-  <div class="box">
+  <div class="ytmc-app">
     <img src="../assets/icon.png" alt="YouTube Music Chorus" width="64">
-    <br>
-    <h1 class="gradient-mask">YouTube Music Chorus</h1>
+    <span class="ytmc-title ytmc-honk">YouTube Music Chorus</span>
     <div class="ytmc-container" style="display: none;">
-      <label for="tolerance">Tolerance</label>
+      <label for="tolerance" class="ytmc-range-title">Tolerance: </label>
+      <span id="toleranceValue" class="ytmc-range-value"></span>
       <br>
+      <span id="toleranceMin" class="ytmc-range-min-max">-30</span>
       <input type="range" id="tolerance" min="-30" max="30" value="0">
-      <span id="toleranceValue"></span>
+      <span id="toleranceMax" class="ytmc-range-min-max">30</span>
       <br><br>
-      <label for="chorusDuration">Chorus Duration</label>
+      <label for="chorusDuration" class="ytmc-range-title">Chorus Duration: </label>
+      <span id="chorusDurationValue" class="ytmc-range-value"></span>
       <br>
+      <span id="chorusDurationMin" class="ytmc-range-min-max">30</span>
       <input type="range" id="chorusDuration" min="30" max="90" value="60">
-      <span id="chorusDurationValue"></span>
+      <span id="chorusDurationMax" class="ytmc-range-min-max">90</span>
       <br><br>
       <button id="startStopButton">Start Playing</button>
     </div>
@@ -33,9 +39,9 @@
         Music app. 🎵✨
       </p>
     </div>
-    <br>
+    <br><br>
     <div>
-      <a href="https://erencelik.xyz" target="_blank">Made with ❤️ by Eren Çelik</a>
+      <a href="https://erencelik.xyz" target="_blank">Made with ❤️ by Eren</a>
     </div>
   </div>
   <script src="../scripts/popup.js"></script>

@@ -1,4 +1,4 @@
-const box = document.querySelector(".box");
+const appContainer = document.querySelector(".ytmc-app");
 const toleranceSlider = document.getElementById("tolerance");
 const chorusDurationSlider = document.getElementById("chorusDuration");
 
@@ -30,12 +30,12 @@ startStopButton.addEventListener("click", toggle);
 
 startStopButton.addEventListener("mouseover", function () {
   if (_started) return;
-  box.classList.add("box-animated");
+  appContainer.classList.add("ytmc-app-animated");
 });
 
 startStopButton.addEventListener("mouseout", function () {
   if (_started) return;
-  box.classList.remove("box-animated");
+  appContainer.classList.remove("ytmc-app-animated");
 });
 
 let _started = localStorage.getItem("started") === 'true';
@@ -54,7 +54,7 @@ function _start() {
     return;
   }
   _started = true;
-  sendMessage(`_startChorus({ tolerance: ${tolerance}, chorusDuration: ${chorusDuration} });`);
+  sendMessage({ code: `_startChorus({ tolerance: ${tolerance}, chorusDuration: ${chorusDuration} });` });
   saveToLocalStorage();
   reloadUI();
 }
@@ -64,7 +64,7 @@ function _stop() {
     return;
   }
   _started = false;
-  sendMessage("_stopChorus();");
+  sendMessage({ code: "_stopChorus();" });
   saveToLocalStorage();
   reloadUI();
 }
@@ -75,13 +75,18 @@ if (chrome.action && chrome.action.isEnabled()) {
   document.querySelector(".ytmc-error").style.display = "none";
   reloadUI();
 } else {
-  document.querySelector(".ytmc-container").style.display = "block";
+  document.querySelector(".ytmc-container").style.display = "none"; // none
   document.querySelector(".ytmc-error").style.display = "block";
 }
 
-function sendMessage(code) {
+function sendMessage({ code, callback = () => { } }) {
   chrome.runtime.sendMessage({ action: "runScript", code: code }, (response) => {
-    console.log(response.result);
+    if (response) {
+      console.log(JSON.stringify(response));
+      if (response.result) {
+        callback(response.result);
+      }
+    }
   });
 }
 
@@ -96,13 +101,13 @@ function reloadUI() {
   chorusDurationSlider.disabled = _started;
   startStopButton.textContent = _started ? "Stop Playing" : "Start Playing";
   // Toggle class based on _started
-  if (box) {
+  if (appContainer) {
     if (_started) {
-      box.classList.add("box-animated");
-      startStopButton.classList.add("button-animated");
+      appContainer.classList.add("ytmc-app-animated");
+      startStopButton.classList.add("ytmc-button-animated");
     } else {
-      box.classList.remove("box-animated");
-      startStopButton.classList.remove("button-animated");
+      appContainer.classList.remove("ytmc-app-animated");
+      startStopButton.classList.remove("ytmc-button-animated");
     }
   }
 }

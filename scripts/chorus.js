@@ -22,7 +22,20 @@ function _stopChorus() {
   }
 }
 
+function getVideoData() {
+  return _playerApi && _playerApi.getVideoData();
+}
+
+function isPaused() {
+  return _playerApi && _playerApi.getPlayerState() === 2;
+}
+
 function playChorus({ tolerance = 0, chorusDuration = 60 }) {
+  if (!_playerApi) {
+    console.log("Error: _playerApi is not ready or invalid.");
+    return;
+  }
+
   console.log("playing chorus...");
 
   _started = true;
