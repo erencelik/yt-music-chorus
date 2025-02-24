@@ -37,7 +37,7 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
 
 ## Contact
 
-For any questions or feedback, please contact me at [erencelik.xyz](https://erencelik.xyz).
+For any questions or feedback, please contact me at [erencelik.xyz]{:target="\_blank"}(https://erencelik.xyz).
 
 ## License
 
