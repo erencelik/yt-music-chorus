@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Music Chorus",
+  "version": "1.0.0",
+  "description": "Controller for playing choruses in YouTube Music",
+  "permissions": ["debugger", "scripting", "tabs"],
+  "host_permissions": ["https://music.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://music.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": ["https://music.youtube.com/*"],
+      "resources": ["chorus.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}
