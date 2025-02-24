@@ -22,7 +22,7 @@ This extension uses Chrome Developer Tools protocol to execute scripts as Google
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/yt-music-chorus.git
+git clone https://github.com/erencelik/yt-music-chorus.git
 ```
 
 2. Load the extension in Chrome:
