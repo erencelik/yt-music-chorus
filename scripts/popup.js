@@ -15,18 +15,18 @@ const nextButton = document.getElementById("nextButton");
 
 const statusProgress = document.getElementById("statusProgress");
 
-document.getElementById("toleranceValue").textContent = tolerance;
-document.getElementById("chorusDurationValue").textContent = chorusDuration;
+document.getElementById("toleranceValue").textContent = tolerance + " seconds";
+document.getElementById("chorusDurationValue").textContent = chorusDuration + " seconds";
 
 toleranceSlider.addEventListener("input", function () {
   tolerance = this.value;
-  document.getElementById("toleranceValue").textContent = this.value;
+  document.getElementById("toleranceValue").textContent = this.value + " seconds";
   saveToLocalStorage();
 });
 
 chorusDurationSlider.addEventListener("input", function () {
   chorusDuration = this.value;
-  document.getElementById("chorusDurationValue").textContent = this.value;
+  document.getElementById("chorusDurationValue").textContent = this.value + " seconds";
   saveToLocalStorage();
 });
 
@@ -35,58 +35,56 @@ playPauseButton.addEventListener("click", toggle);
 nextButton.addEventListener("click", _next);
 
 playPauseButton.addEventListener("mouseover", function () {
-  if (_started) return;
+  if (isPlaying) return;
   appContainer.classList.add("ytmc-app-animated");
 });
 
 playPauseButton.addEventListener("mouseout", function () {
-  if (_started) return;
+  if (isPlaying) return;
   appContainer.classList.remove("ytmc-app-animated");
 });
 
-let _started = localStorage.getItem("started") === 'true';
+let isPlaying = localStorage.getItem("isPlaying") === 'true';
 
 function toggle() {
-  if (_started) {
-    _stop();
+  if (isPlaying) {
+    _pause();
   } else {
-    _start();
+    _play();
   }
   reloadUI();
 }
 
-function _start() {
-  if (_started) {
+function _play() {
+  if (isPlaying) {
     return;
   }
-  _started = true;
-  sendMessage({ code: `startChorus({ tolerance: ${tolerance}, chorusDuration: ${chorusDuration} });` });
+  sendMessage({ code: `play({ tolerance: ${tolerance}, chorusDuration: ${chorusDuration} });` });
   saveToLocalStorage();
   reloadUI();
 }
 
-function _stop() {
-  if (!_started) {
+function _pause() {
+  if (!isPlaying) {
     return;
   }
-  _started = false;
-  sendMessage({ code: "stopChorus();" });
+  sendMessage({ code: "pause();" });
   saveToLocalStorage();
   reloadUI();
 }
 
 function _prev() {
-  if (!_started) {
+  if (!isPlaying) {
     return;
   }
-  sendMessage({ code: "prevSong();" });
+  sendMessage({ code: "prev();" });
 }
 
 function _next() {
-  if (!_started) {
+  if (!isPlaying) {
     return;
   }
-  sendMessage({ code: "nextSong();" });
+  sendMessage({ code: "next();" });
 }
 
 if (chrome.action && chrome.action.isEnabled()) {
@@ -113,21 +111,21 @@ function sendMessage({ code, callback = () => { } }) {
 function saveToLocalStorage() {
   localStorage.setItem("tolerance", tolerance);
   localStorage.setItem("chorusDuration", chorusDuration);
-  localStorage.setItem("started", _started);
+  localStorage.setItem("isPlaying", isPlaying);
 }
 
 function reloadUI() {
-  toleranceSlider.disabled = _started;
-  chorusDurationSlider.disabled = _started;
+  toleranceSlider.disabled = isPlaying;
+  chorusDurationSlider.disabled = isPlaying;
   const playPauseImage = playPauseButton.querySelector("img");
-  playPauseImage.src = _started ? "../assets/pause.svg" : "../assets/play.svg";
-  playPauseButton.title = _started ? "Pause" : "Play";
-  playPauseImage.alt = _started ? "Pause" : "Play";
-  prevButton.disabled = !_started;
-  nextButton.disabled = !_started;
-  // Toggle class based on _started
+  playPauseImage.src = isPlaying ? "../assets/pause.svg" : "../assets/play.svg";
+  playPauseButton.title = isPlaying ? "Pause" : "Play";
+  playPauseImage.alt = isPlaying ? "Pause" : "Play";
+  prevButton.disabled = !isPlaying;
+  nextButton.disabled = !isPlaying;
+  // Toggle class based on isPlaying
   if (appContainer) {
-    if (_started) {
+    if (isPlaying) {
       appContainer.classList.add("ytmc-app-animated");
     } else {
       appContainer.classList.remove("ytmc-app-animated");
@@ -137,9 +135,13 @@ function reloadUI() {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // console.log(`popup: message received: ${JSON.stringify(message)}, sender: ${sender}}`);
-  console.log(message);
+  // console.log(message);
   if (message.action === "ytmcUpdate" && message.data) {
     const { video, isPaused, currentTime } = message.data;
+    if (isPlaying === isPaused) {
+      isPlaying = !isPaused;
+      reloadUI();
+    }
     // console.log(`Playing song ${video.title}, currentTime is ${currentTime}, isPaused = ${isPaused}`);
     const title = `${video.title} • ${video.author}`
     if (videoTitle.textContent !== title) {

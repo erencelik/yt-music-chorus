@@ -18,6 +18,12 @@ a:hover {
   color: white;
 }
 
+/* Horizontal Divider */
+hr {
+  opacity: 0.3;
+  margin: 0 16px;
+}
+
 /* Input */
 input[type="range"] {
   display: inline-flex;
@@ -63,15 +69,20 @@ input[type="range"] {
   margin-bottom: 8px;
 }
 
+/* Container */
+.ytmc-container {
+  margin-top: 24px;
+}
+
 /* Range Input Label */
 .ytmc-range-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin: 0;
 }
 
 /* Range Input Value */
 .ytmc-range-value {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
   margin: 0;
 }
@@ -95,8 +106,13 @@ input[type="range"] {
 }
 
 /* Video Info */
-.ytmc-video-title {
+.ytmc-video-info-container {
   display: block;
+  margin-top: 32px;
+}
+
+.ytmc-video-title {
+  display: inline-block;
   font-size: 1.2rem;
   margin: 0;
 }
