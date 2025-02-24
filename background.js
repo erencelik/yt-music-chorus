@@ -51,7 +51,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-
 function enableExtension(tabId) {
   chrome.action.enable(tabId);
   chrome.action.setIcon({ tabId: tabId, path: "icon.png" });
