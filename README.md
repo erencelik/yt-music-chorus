@@ -1,8 +1,8 @@
 <p align="center">
   <img src="assets/icon.png" alt="YT Music Chorus Icon" width="96"/>
+  <img src="assets/logo.png" alt="YT Music Chorus Logo" style="display: block;" />
 </p>
-
-# YouTube Music Chorus
+<hr/>
 
 **YT Music Chorus** is a Chrome Extension that enhances your YouTube Music experience by only playing choruses then jumping to next song repeatedly.
 
