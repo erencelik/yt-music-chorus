@@ -8,4 +8,4 @@ function injectScript(file_path, tag) {
   node.appendChild(script);
 }
 
-injectScript(chrome.runtime.getURL('chorus.js'), 'body');
+injectScript(chrome.runtime.getURL('scripts/chorus.js'), 'body');
