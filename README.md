@@ -1,16 +1,14 @@
 <p align="center">
-  <img src="assets/icon.png" alt="YT Music Chorus Icon" width="64"/>
+  <img src="assets/icon.png" alt="YT Music Chorus Icon" width="96"/>
 </p>
 
-<br>
+# YouTube Music Chorus
 
-# 🎧 YouTube Music Chorus
-
-**YT Music Chorus** is a Chrome Extension that enhances your YouTube Music experience with additional features.
+**YT Music Chorus** is a Chrome Extension that enhances your YouTube Music experience by only playing choruses then jumping to next song repeatedly.
 
 ## ⚠️ Warning
 
-This extension uses Chrome Developer Tools protocol to execute scripts as Google doesn't allow executing scripts on the target context since manifest v3.
+This extension uses **Chrome Developer Tools** protocol to execute scripts as Google doesn't allow executing scripts on the target context since manifest v3.
 
 ## Features
 
@@ -19,7 +17,7 @@ This extension uses Chrome Developer Tools protocol to execute scripts as Google
 
 ## Installation
 
-1. Clone the repository:
+1. Clone repository:
 
    - ```bash
      git clone https://github.com/erencelik/yt-music-chorus.git
