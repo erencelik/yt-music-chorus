@@ -8,4 +8,15 @@ function injectScript(file_path, tag) {
   node.appendChild(script);
 }
 
-injectScript(chrome.runtime.getURL('scripts/chorus.js'), 'body');
+window.addEventListener("message", (event) => {
+  if (event && event.data) {
+    if (event.data.from === 'ytmc' && event.data.value) {
+      // console.log(`event: ${JSON.stringify(event.data)}`);
+      if (chrome.runtime?.id) {
+        chrome.runtime.sendMessage({ action: "ytmcNotify", data: event.data.value });
+      }
+    }
+  }
+});
+
+injectScript(chrome.runtime.getURL('scripts/ytmc.js'), 'body');

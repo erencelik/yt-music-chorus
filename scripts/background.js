@@ -19,6 +19,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // console.log(`background: message received: ${JSON.stringify(message)}, sender: ${sender}}`);
   if (message.action === "runScript") {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs.length === 0) return;
@@ -48,6 +49,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     // Required to keep `sendResponse` async
     return true;
+  } else if (message.action === 'ytmcNotify') {
+    if (chrome.runtime?.id) {
+      chrome.runtime.sendMessage({ action: "ytmcUpdate", data: message.data });
+    }
   }
 });
 

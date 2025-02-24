@@ -1,25 +1,51 @@
 let outro = false;
 
-let intervalId;
+let playerIntervalId;
+let chorusIntervelId;
+let propagateIntervalId;
 
 window._playerApi = undefined;
 
-function _startChorus({ tolerance = 0, chorusDuration = 60 }) {
+let options = { tolerance: 0, chorusDuration: 60 };
+
+function play({ tolerance = 0, chorusDuration = 60 }) {
+  _clearIntervals();
   if (_playerApi) {
-    playChorus({ tolerance, chorusDuration });
+    options.tolerance = tolerance;
+    options.chorusDuration = chorusDuration;
+    _playChorus({ tolerance, chorusDuration });
   } else {
     console.log("unfortunately, _playerApi is not ready yet.");
   }
 }
 
-function _stopChorus() {
-  if (intervalId) {
-    clearInterval(intervalId);
-  }
+function pause() {
+  _clearIntervals();
   if (_playerApi) {
     _playerApi.pauseVideo();
     _playerApi.syncVolume();
   }
+}
+
+function prev() {
+  _clearIntervals();
+  if (!_playerApi) {
+    return;
+  }
+  outro = false;
+  _playerApi.setVolume(0);
+  _playerApi.previousVideo();
+}
+
+function next() {
+  _clearIntervals();
+  if (!_playerApi) {
+    return;
+  }
+  outro = false;
+  _playerApi.setVolume(0);
+  _playerApi.nextVideo();
+  _playChorus(options);
 }
 
 function getVideoData() {
@@ -30,7 +56,11 @@ function isPaused() {
   return _playerApi && _playerApi.getPlayerState() === 2;
 }
 
-function playChorus({ tolerance = 0, chorusDuration = 60 }) {
+function getCurrentTime() {
+  return _playerApi && _playerApi.getCurrentTime();
+}
+
+function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
   if (!_playerApi) {
     console.log("Error: _playerApi is not ready or invalid.");
     return;
@@ -50,13 +80,13 @@ function playChorus({ tolerance = 0, chorusDuration = 60 }) {
 
     const duration = _playerApi.getDuration();
 
-    const lyrics = stripLyrics(document.querySelectorAll(".description.ytmusic-description-shelf-renderer")[0].innerText);
+    const lyrics = _stripLyrics(document.querySelectorAll(".description.ytmusic-description-shelf-renderer")[0].innerText);
 
     console.log(lyrics);
 
     console.log(`Duration: ${duration}s`);
 
-    const chorusFirstOccurrenceIndex = findChorusFirstOccurrenceIndex(lyrics);
+    const chorusFirstOccurrenceIndex = _findChorusFirstOccurrenceIndex(lyrics);
 
     console.log(`Chorus first occurrence index: ${chorusFirstOccurrenceIndex}`);
 
@@ -80,27 +110,27 @@ function playChorus({ tolerance = 0, chorusDuration = 60 }) {
     _playerApi.seekTo(chorusStart);
 
     outro = false;
-    intervalId = setInterval(() => {
+    chorusIntervelId = setInterval(() => {
       if (_playerApi && typeof _playerApi.getCurrentTime === "function") {
         if (_playerApi.getCurrentTime() > chorusEnd && !outro) {
           outro = true;
-          fadeVolume(100, 0);
+          _fadeVolume(100, 0);
 
           setTimeout(() => {
-            clearInterval(intervalId); // ✅ Correctly clear the interval
+            clearInterval(chorusIntervelId); // ✅ Correctly clear the interval
             _playerApi.pauseVideo();
             _playerApi.nextVideo();
-            playChorus({ tolerance, chorusDuration });
+            _playChorus({ tolerance, chorusDuration });
           }, 2000);
         }
       } else {
         console.error("Error: _playerApi is not ready or invalid.");
-        clearInterval(intervalId); // Stop the loop if _playerApi is not valid
+        clearInterval(chorusIntervelId); // Stop the loop if _playerApi is not valid
       }
     }, 500);
 
     // TODO: play until end of first chorus timestamp...
-    fadeVolume(0, 100);
+    _fadeVolume(0, 100);
 
     _playerApi.playVideo();
 
@@ -109,7 +139,7 @@ function playChorus({ tolerance = 0, chorusDuration = 60 }) {
   }, 1000);
 }
 
-function fadeVolume(from, to, interval = 200) {
+function _fadeVolume(from, to, interval = 200) {
   const steps = 10;
   const val = (to - from) / steps;
   _playerApi.setVolume(from);
@@ -122,7 +152,7 @@ function fadeVolume(from, to, interval = 200) {
   }
 }
 
-function stripLyrics(lyrics) {
+function _stripLyrics(lyrics) {
   let lines = lyrics.split("\n").map(line => line.trim()).filter(line => line.length > 0); // Clean lines
 
   // Define common attribution keywords
@@ -139,7 +169,7 @@ function stripLyrics(lyrics) {
   return lines.join("\n"); // Return cleaned lyrics
 }
 
-function findChorusFirstOccurrenceIndex(lyrics) {
+function _findChorusFirstOccurrenceIndex(lyrics) {
   const lines = lyrics.split("\n").map(line => line.trim()).filter(line => line.length > 0); // Clean lines
   const lineCounts = new Map(); // Count occurrences
   const firstOccurrence = new Map(); // Store first occurrence index
@@ -187,10 +217,44 @@ function findChorusFirstOccurrenceIndex(lyrics) {
   return index;
 }
 
-let playerInterval = setInterval(() => {
+playerIntervalId = setInterval(() => {
   if (window.player) {
-    clearInterval(playerInterval);
+    _clearIntervals();
     _playerApi = window.player.playerApi;
-    console.log("Player API is ready.");
+    console.log("Player API is ready");
+    if (!propagateIntervalId) {
+      console.log(`No interval found for propagation, so attaching new one...`);
+      propagateIntervalId = setInterval(() => {
+        if (_playerApi) {
+          _propagate();
+        }
+      }, 500);
+    }
   }
 }, 100);
+
+function _clearIntervals() {
+  if (playerIntervalId) {
+    clearInterval(playerIntervalId);
+  }
+  if (chorusIntervelId) {
+    clearInterval(chorusIntervelId);
+  }
+  // if (propagateIntervalId) {
+  //   clearInterval(propagateIntervalId);
+  // }
+}
+
+function _propagate() {
+  const videoData = getVideoData();
+  if (videoData) {
+    const data = {
+      video: videoData,
+      isPaused: isPaused(),
+      currentTime: getCurrentTime()
+    }
+    const msg = { from: "ytmc", value: data };
+    // console.log(`sending message ${JSON.stringify(msg)}`);
+    window.postMessage(msg, "*");
+  }
+}

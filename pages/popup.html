@@ -30,7 +30,20 @@
       <input type="range" id="chorusDuration" min="30" max="90" value="60">
       <span id="chorusDurationMax" class="ytmc-range-min-max">90</span>
       <br><br>
-      <button id="startStopButton">Start Playing</button>
+      <div class="ytmc-video-info">
+        <span class="ytmc-video-title"></span>
+      </div>
+      <div class="ytmc-controls-container">
+        <button id="prevButton" class="ytmc-control-button" title="Previous Song" disabled>
+          <img src="../assets/prev.svg" alt="Previous Song">
+        </button>
+        <button id="playPauseButton" class="ytmc-control-button" title="Play/Pause">
+          <img src="../assets/play.svg" alt="Play/Pause">
+        </button>
+        <button id="nextButton" class="ytmc-control-button" title="Next Song" disabled>
+          <img src="../assets/next.svg" alt="Next Song">
+        </button>
+      </div>
     </div>
     <div class="ytmc-error" style="color: red;">
       <p id="error">
