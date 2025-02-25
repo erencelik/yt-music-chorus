@@ -84,28 +84,39 @@ function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
   // get lyrics
   setTimeout(() => {
 
+    let chorusStart = getCurrentTime();
+
     const duration = _playerApi.getDuration();
 
-    const lyrics = _stripLyrics(document.querySelectorAll(".description.ytmusic-description-shelf-renderer")[0].innerText);
+    const lyricsDom = document.querySelectorAll(".description.ytmusic-description-shelf-renderer");
 
-    console.log(lyrics);
+    const lyricsArray = Array.from(lyricsDom).map(el => el?.innerText?.trim() || "")
 
-    console.log(`Duration: ${duration}s`);
+    if (lyricsDom && lyricsArray && lyricsArray.length > 0) {
 
-    const chorusFirstOccurrenceIndex = _findChorusFirstOccurrenceIndex(lyrics);
+      const lyrics = _stripLyrics(lyricsArray[0]);
 
-    console.log(`Chorus first occurrence index: ${chorusFirstOccurrenceIndex}`);
+      console.log(lyrics);
 
-    const lineCount = lyrics.split("\n").length;
+      console.log(`Duration: ${duration}s`);
 
-    console.log(`Number of lines: ${lineCount}`);
+      const chorusFirstOccurrenceIndex = _findChorusFirstOccurrenceIndex(lyrics);
 
-    const avgLineDuration = duration / lineCount;
+      console.log(`Chorus first occurrence index: ${chorusFirstOccurrenceIndex}`);
 
-    console.log(`Average duration of each line: ${avgLineDuration}s`);
+      const lineCount = lyrics.split("\n").length;
+
+      console.log(`Number of lines: ${lineCount}`);
+
+      const avgLineDuration = duration / lineCount;
+
+      console.log(`Average duration of each line: ${avgLineDuration}s`);
+
+      chorusStart = Math.max(0, (chorusFirstOccurrenceIndex * avgLineDuration) + tolerance);
+
+    }
 
     // TODO: detect chorus timestamps...
-    const chorusStart = Math.max(0, (chorusFirstOccurrenceIndex * avgLineDuration) + tolerance);
     const chorusEnd = chorusStart + chorusDuration;
 
     // TODO: seek to first chorus timestamp...

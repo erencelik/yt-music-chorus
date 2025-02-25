@@ -134,7 +134,9 @@ function reloadUI() {
   setVersionText();
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+const port = chrome.runtime.connect({ name: "ytmc-popup-channel" });
+
+port.onMessage.addListener((message) => {
   // console.log(`popup: message received: ${JSON.stringify(message)}, sender: ${sender}}`);
   // console.log(message);
   if (message.action === "ytmcUpdate" && message.data) {

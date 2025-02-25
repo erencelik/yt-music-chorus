@@ -9,12 +9,13 @@ function injectScript(file_path, tag) {
 }
 
 window.addEventListener("message", (event) => {
+  if (!chrome || !chrome.runtime || !chrome.runtime?.id) {
+    return;
+  }
   if (event && event.data) {
     if (event.data.from === 'ytmc' && event.data.value) {
       // console.log(`event: ${JSON.stringify(event.data)}`);
-      if (chrome.runtime?.id) {
-        chrome.runtime.sendMessage({ action: "ytmcNotify", data: event.data.value });
-      }
+      chrome.runtime.sendMessage({ action: "ytmcNotify", data: event.data.value });
     }
   }
 });
