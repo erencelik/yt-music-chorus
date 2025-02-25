@@ -33,6 +33,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
+// Listen for messages from the content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (!chrome || !chrome.runtime || !chrome.runtime?.id || !popupPort) {
@@ -79,11 +80,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+/**
+ * Enable the extension
+ * @param {number} tabId - The tab ID
+ */
 function enableExtension(tabId) {
   chrome.action.enable(tabId);
   chrome.action.setIcon({ tabId: tabId, path: "../assets/icon128.png" });
 }
 
+/**
+ * Disable the extension
+ * @param {number} tabId - The tab ID
+ */
 function disableExtension(tabId) {
   chrome.action.disable(tabId);
   chrome.action.setIcon({ tabId: tabId, path: "../assets/icon_disabled128.png" });

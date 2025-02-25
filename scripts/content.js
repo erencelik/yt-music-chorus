@@ -1,5 +1,10 @@
 console.log("Content script is running...");
 
+/**
+ * Inject a script into the document
+ * @param {string} file_path - The path to the script to inject
+ * @param {string} tag - The tag to inject the script into
+ */
 function injectScript(file_path, tag) {
   var node = document.getElementsByTagName(tag)[0];
   var script = document.createElement('script');
@@ -8,6 +13,7 @@ function injectScript(file_path, tag) {
   node.appendChild(script);
 }
 
+// Listen for messages from the background script
 window.addEventListener("message", (event) => {
   if (!chrome || !chrome.runtime || !chrome.runtime?.id) {
     return;
@@ -20,4 +26,7 @@ window.addEventListener("message", (event) => {
   }
 });
 
+/**
+ * Inject the ytmc script into the document
+ */
 injectScript(chrome.runtime.getURL('scripts/ytmc.js'), 'body');

@@ -8,6 +8,10 @@ window._playerApi = undefined;
 
 let options = { tolerance: 0, chorusDuration: 60 };
 
+/**
+ * Play the current song
+ * @param {Object} options - The options for the chorus
+ */
 function play({ tolerance = 0, chorusDuration = 60 }) {
   _clearIntervals();
   if (_playerApi) {
@@ -19,6 +23,9 @@ function play({ tolerance = 0, chorusDuration = 60 }) {
   }
 }
 
+/**
+ * Pause the current song
+ */
 function pause() {
   _clearIntervals();
   if (_playerApi) {
@@ -27,6 +34,9 @@ function pause() {
   }
 }
 
+/**
+ * Play the previous song
+ */
 function prev() {
   _clearIntervals();
   if (!_playerApi) {
@@ -43,6 +53,9 @@ function prev() {
   _playChorus(options);
 }
 
+/**
+ * Play the next song
+ */
 function next() {
   _clearIntervals();
   if (!_playerApi) {
@@ -54,18 +67,34 @@ function next() {
   _playChorus(options);
 }
 
+/**
+ * Get the video data
+ * @returns {Object} The video data
+ */
 function getVideoData() {
   return _playerApi && _playerApi.getVideoData();
 }
 
+/**
+ * Check if the player is paused
+ * @returns {boolean} True if the player is paused, false otherwise
+ */
 function isPaused() {
   return _playerApi && _playerApi.getPlayerState() === 2;
 }
 
+/**
+ * Get the current time of the player
+ * @returns {number} The current time of the player
+ */
 function getCurrentTime() {
   return _playerApi && _playerApi.getCurrentTime();
 }
 
+/**
+ * Play the chorus
+ * @param {Object} options - The options for the chorus
+ */
 function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
   if (!_playerApi) {
     console.log("Error: _playerApi is not ready or invalid.");
@@ -86,6 +115,8 @@ function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
 
     let chorusStart = getCurrentTime();
 
+    let chorusEnd = chorusStart + chorusDuration;
+
     const duration = _playerApi.getDuration();
 
     const lyricsDom = document.querySelectorAll(".description.ytmusic-description-shelf-renderer");
@@ -100,62 +131,86 @@ function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
 
       console.log(`Duration: ${duration}s`);
 
-      const chorusFirstOccurrenceIndex = _findChorusFirstOccurrenceIndex(lyrics);
-
-      console.log(`Chorus first occurrence index: ${chorusFirstOccurrenceIndex}`);
-
-      const lineCount = lyrics.split("\n").length;
-
-      console.log(`Number of lines: ${lineCount}`);
-
-      const avgLineDuration = duration / lineCount;
-
-      console.log(`Average duration of each line: ${avgLineDuration}s`);
-
-      chorusStart = Math.max(0, (chorusFirstOccurrenceIndex * avgLineDuration) + tolerance);
+      ({ chorusStart, chorusEnd } = _calculateChorusTimestamps(lyrics, duration, chorusDuration));
 
     }
-
-    // TODO: detect chorus timestamps...
-    const chorusEnd = chorusStart + chorusDuration;
-
-    // TODO: seek to first chorus timestamp...
-    // warning: YouTube music timing calculation is different as you play playlist
-    // or single song so be careful while penetrating this logic...
-    // document.querySelector("video").currentTime = ?;
 
     _playerApi.seekTo(chorusStart);
 
     outro = false;
     chorusIntervelId = setInterval(() => {
-      if (_playerApi && typeof _playerApi.getCurrentTime === "function") {
-        if (_playerApi.getCurrentTime() > chorusEnd && !outro) {
-          outro = true;
-          _fadeVolume(100, 0);
-
-          setTimeout(() => {
-            clearInterval(chorusIntervelId); // ✅ Correctly clear the interval
-            _playerApi.pauseVideo();
-            _playerApi.nextVideo();
-            _playChorus({ tolerance, chorusDuration });
-          }, 2000);
-        }
-      } else {
-        console.error("Error: _playerApi is not ready or invalid.");
-        clearInterval(chorusIntervelId); // Stop the loop if _playerApi is not valid
+      const currentTime = _playerApi.getCurrentTime();
+      if (currentTime && currentTime > chorusEnd && !outro) {
+        outro = true;
+        _fadeVolume(100, 0);
+        setTimeout(() => {
+          clearInterval(chorusIntervelId);
+          _playerApi.pauseVideo();
+          _playerApi.nextVideo();
+          _playChorus({ tolerance, chorusDuration });
+        }, 2000);
       }
     }, 500);
 
-    // TODO: play until end of first chorus timestamp...
     _fadeVolume(0, 100);
 
     _playerApi.playVideo();
 
-    // TODO: go next...
-
   }, 1000);
 }
 
+/**
+ * Calculate the timestamp where the first chorus likely starts
+ * @param {string} lyrics - The full lyrics text
+ * @param {number} duration - Total duration of the song
+ * @param {number} chorusDuration - The duration of the chorus
+ * @returns {Object} The calculated start and end times in seconds
+ */
+function _calculateChorusTimestamps(lyrics, duration, chorusDuration) {
+  const lines = lyrics.split("\n");
+  const lineCount = lines.length;
+  const avgLineDuration = duration / lineCount;
+  const chorusFirstOccurrenceIndex = _findChorusFirstOccurrenceIndex(lyrics);
+
+  console.log(`Chorus first occurrence index: ${chorusFirstOccurrenceIndex}`);
+  console.log(`Number of lines: ${lineCount}`);
+  console.log(`Average duration of each line: ${avgLineDuration}s`);
+
+  let chorusStart = 0;
+  let chorusEnd = 0;
+
+  // Calculate chorus start timestamp based on lyrics analysis
+  if (chorusFirstOccurrenceIndex >= 0) {
+    // Base calculation using line timing
+    chorusStart = Math.max(0, (chorusFirstOccurrenceIndex * avgLineDuration));
+
+    // Adjust for common song structure patterns
+    if (chorusFirstOccurrenceIndex < lineCount * 0.2) {
+      // If chorus appears very early, likely a false positive
+      chorusStart = Math.max(duration * 0.25, chorusStart);
+    } else if (chorusFirstOccurrenceIndex > lineCount * 0.6) {
+      // If detected very late, try earlier in song
+      chorusStart = Math.min(duration * 0.4, chorusStart);
+    }
+
+    console.log(`Calculated chorus start time: ${chorusStart}s`);
+  } else {
+    // Fallback if no chorus detected - try typical timing
+    chorusStart = duration * 0.25; // Often starts ~25% into song
+    console.log(`No chorus detected, using fallback start time: ${chorusStart}s`);
+  }
+
+  chorusEnd = chorusStart + chorusDuration;
+
+  return { chorusStart, chorusEnd };
+}
+
+/**
+ * Fade the volume of the player
+ * @param {number} from - The starting volume
+ * @param {number} to - The ending volume
+ * @param {number} interval - The interval between steps
+ */
 function _fadeVolume(from, to, interval = 200) {
   const steps = 10;
   const val = (to - from) / steps;
@@ -169,6 +224,11 @@ function _fadeVolume(from, to, interval = 200) {
   }
 }
 
+/**
+ * Strip the lyrics of any attribution keywords
+ * @param {string} lyrics - The full lyrics text
+ * @returns {string} The cleaned lyrics
+ */
 function _stripLyrics(lyrics) {
   let lines = lyrics.split("\n").map(line => line.trim()).filter(line => line.length > 0); // Clean lines
 
@@ -186,6 +246,11 @@ function _stripLyrics(lyrics) {
   return lines.join("\n"); // Return cleaned lyrics
 }
 
+/**
+ * Find the first occurrence index of the most repeated line
+ * @param {string} lyrics - The full lyrics text
+ * @returns {number} The first occurrence index of the most repeated line
+ */
 function _findChorusFirstOccurrenceIndex(lyrics) {
   const lines = lyrics.split("\n").map(line => line.trim()).filter(line => line.length > 0); // Clean lines
   const lineCounts = new Map(); // Count occurrences
@@ -234,6 +299,9 @@ function _findChorusFirstOccurrenceIndex(lyrics) {
   return index;
 }
 
+/**
+ * Initialize the player API
+ */
 playerIntervalId = setInterval(() => {
   if (window.player) {
     _clearIntervals();
@@ -250,6 +318,9 @@ playerIntervalId = setInterval(() => {
   }
 }, 100);
 
+/**
+ * Clear the intervals
+ */
 function _clearIntervals() {
   if (playerIntervalId) {
     clearInterval(playerIntervalId);
@@ -262,6 +333,9 @@ function _clearIntervals() {
   // }
 }
 
+/**
+ * Propagate the player data
+ */
 function _propagate() {
   const videoData = getVideoData();
   if (videoData) {
