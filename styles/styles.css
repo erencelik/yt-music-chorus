@@ -11,6 +11,7 @@ body {
 
 /* Anchor */
 a {
+  font-size: 0.8rem;
   color: gray;
 }
 
@@ -166,6 +167,12 @@ input[type="range"] {
   /* Revert cursor */
   pointer-events: none;
   /* Prevent clicks */
+}
+
+/* Version Text */
+.ytmc-version-text {
+  font-size: 0.8rem;
+  color: gray;
 }
 
 /* Animations */

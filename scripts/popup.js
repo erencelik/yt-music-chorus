@@ -131,6 +131,7 @@ function reloadUI() {
       appContainer.classList.remove("ytmc-app-animated");
     }
   }
+  setVersionText();
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -149,3 +150,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   }
 });
+
+function setVersionText() {
+  const manifest = chrome.runtime.getManifest();
+  document.querySelector(".ytmc-version-text").textContent = manifest.version;
+}
