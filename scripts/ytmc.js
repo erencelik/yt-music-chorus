@@ -34,7 +34,13 @@ function prev() {
   }
   outro = false;
   _playerApi.setVolume(0);
-  _playerApi.previousVideo();
+  if (getCurrentTime() >= 5) {
+    _playerApi.previousVideo();
+    _playerApi.previousVideo();
+  } else {
+    _playerApi.previousVideo();
+  }
+  _playChorus(options);
 }
 
 function next() {

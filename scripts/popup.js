@@ -153,5 +153,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function setVersionText() {
   const manifest = chrome.runtime.getManifest();
-  document.querySelector(".ytmc-version-text").textContent = manifest.version;
+  document.querySelector(".ytmc-version-text").textContent = `v${manifest.version}`;
 }
