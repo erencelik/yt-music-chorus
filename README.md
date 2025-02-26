@@ -13,9 +13,9 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
 ## Features
 
 - **Chorus Detection**: Detects the chorus of a song and plays the chorus only.
-- Jumps to next song after chorus is played automatically.
+- If `Repeat` is disabled then, jumps to next song after chorus is played.
 - Manually enabling/disabling chorus detection mode.
-- Loop current song mode.
+- Loop mode of the current song.
 - Player controls.
 
 ## Installation
@@ -27,7 +27,7 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
      ```
 
 2. Load the extension in Chrome:
-   - Open Chrome and go to `chrome://extensions/`
+   - Open Chrome and go to `chrome://extensions`
    - Enable "Developer mode"
    - Click "Load unpacked" and select the repository directory
 
@@ -36,15 +36,15 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
 1. Open YouTube Music desktop app or website.
 2. The extension will only be enabled on YouTube Music Desktop App and [YouTube Music Web](https://music.youtube.com).
 3. **Tolerance** is seconds to add detected chorus timestamp. Default is 0 seconds, (min = -30, max = 30)
-4. **Chorus Duration** is duration chorus. Default is 60 seconds, (min = 30, max = 90)
+4. **Chorus Duration** is duration of chorus. Default is 60 seconds, (min = 30, max = 90)
 5. **Chorus** is mode of chorus detection. Default is true.
-6. **Repeat** is loop current song. Default is false.
+6. **Repeat** is loop mode of current song. Default is false.
 
 ## Known Issues
 
-- If you want to enable extension functionality then player controls inside extension should be used. 
-Playing songs through YouTube Music's own player will not trigger any features of extension 
-instead extension will only be displaying song information like title, artist, duration, etc.
+- In order to use chorus detection functionality then player controls inside extension should be used. 
+Playing songs through YouTube Music's own player will not trigger chorus detection feature 
+but only display song information like title, artist, duration, etc.
 
 ## Contact
 

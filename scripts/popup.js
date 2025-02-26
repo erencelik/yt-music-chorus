@@ -144,6 +144,9 @@ function _setVersionText() {
  * @returns {string} The formatted time
  */
 function _formatMinutes(time) {
+  if (typeof time !== "number" || isNaN(time)) {
+    return "0";
+  }
   let minutes = parseInt(time / 60);
   if (minutes % 60 === 0) {
     minutes = minutes / 60;
@@ -160,11 +163,23 @@ function _formatMinutes(time) {
  * @returns {string} The formatted time
  */
 function _formatSeconds(time) {
+  if (typeof time !== "number" || isNaN(time)) {
+    return "00";
+  }
   let seconds = Math.ceil(time % 60).toFixed();
   if (seconds % 60 === 0) {
     seconds = 0;
   }
   return seconds.toString().padStart(2, '0');
+}
+
+/**
+ * Format the time
+ * @param {number} time - The time to format
+ * @returns {string} The formatted time
+ */
+function _formatTime(time) {
+  return `${_formatMinutes(time)}:${_formatSeconds(time)}`;
 }
 
 /**
@@ -251,8 +266,8 @@ function _initialize() {
           videoAuthor.textContent = video.author;
         }
         if (duration) {
-          const currentTimeString = `${_formatMinutes(currentTime)}:${_formatSeconds(currentTime)}`;
-          const durationString = `${_formatMinutes(duration)}:${_formatSeconds(duration)}`;
+          const currentTimeString = _formatTime(currentTime);
+          const durationString = _formatTime(duration);
           durationText.style.display = "block";
           durationText.textContent = `${currentTimeString} / ${durationString}`;
         } else {
