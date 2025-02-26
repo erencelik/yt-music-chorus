@@ -9,18 +9,36 @@ let _propagateIntervalId;
 
 let _jumping = false;
 
-let _options = { tolerance: 0, chorusDuration: 60 };
+let _options = { tolerance: 0, chorusDuration: 60, chorusMode: true, repeat: false };
+
+/**
+ * Set the options
+ * @param {Object} options - The options for the chorus
+ */
+function setOptions(options) {
+  _options = options;
+  console.log(`Options set to: ${JSON.stringify(_options)}`);
+}
+
 
 /**
  * Play the current song
  * @param {Object} options - The options for the chorus
  */
-function play({ tolerance = 0, chorusDuration = 60 }) {
+function play({ tolerance = 0, chorusDuration = 60, chorusMode = true, repeat = false }) {
   _clearIntervals();
   if (_playerApi) {
     _options.tolerance = tolerance;
     _options.chorusDuration = chorusDuration;
-    _playChorus(_options);
+    _options.chorusMode = chorusMode;
+    _options.repeat = repeat;
+    if (_options.chorusMode) {
+      console.log("Chorus mode set to on, playing chorus...");
+      _playChorus();
+    } else {
+      console.log("Chorus mode set to off, just playing song...");
+      _playerApi.playVideo();
+    }
   } else {
     console.log("unfortunately, _playerApi is not ready yet.");
   }
@@ -53,7 +71,7 @@ function prev() {
   } else {
     _playerApi.previousVideo();
   }
-  _playChorus(_options);
+  _playChorus();
 }
 
 /**
@@ -67,7 +85,7 @@ function next() {
   _jumping = false;
   _playerApi.setVolume(0);
   _playerApi.nextVideo();
-  _playChorus(_options);
+  _playChorus();
 }
 
 /**
@@ -96,18 +114,17 @@ function getCurrentTime() {
 
 /**
  * Play the chorus
- * @param {Object} options - The options for the chorus
  */
-function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
+function _playChorus() {
   if (!_playerApi) {
     console.log("Error: _playerApi is not ready or invalid.");
     return;
   }
 
-  console.log("playing chorus...");
+  const { tolerance, chorusDuration, repeat } = _options;
 
   _started = true;
-  console.log(`Tolerance: ${tolerance}, Chorus Duration: ${chorusDuration}`);
+  console.log(`Tolerance: ${tolerance}, Chorus Duration: ${chorusDuration}, Repeat: ${repeat}`);
   _playerApi.pauseVideo();
 
   // load lyrics by clicking it
@@ -148,9 +165,13 @@ function _playChorus({ tolerance = 0, chorusDuration = 60 }) {
         _fadeVolume(100, 0);
         setTimeout(() => {
           clearInterval(_chorusIntervalId);
-          _playerApi.pauseVideo();
-          _playerApi.nextVideo();
-          _playChorus(_options);
+          if (repeat) {
+            _playerApi.pauseVideo();
+            _playerApi.seekTo(chorusTimestamps.chorusStart);
+          } else {
+            _playerApi.nextVideo();
+          }
+          _playChorus();
         }, 2000);
       }
     }, 500);

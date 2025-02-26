@@ -13,7 +13,6 @@
 
 <body>
   <div class="ytmc-app">
-    <!-- <img src="../assets/icon.png" alt="YouTube Music Chorus" width="64"> -->
     <span class="ytmc-title ytmc-honk">YouTube Music Chorus</span>
     <br>
     <hr>
@@ -32,9 +31,27 @@
       <input type="range" id="chorusDuration" min="30" max="90" value="60">
       <span id="chorusDurationMax" class="ytmc-range-min-max">90</span>
       <br><br>
+      <div class="ytmc-switch-container">
+        <span class="ytmc-switch-title">Chorus: </span>
+        <label class="ytmc-chorus-switch">
+          <input type="checkbox" id="chorusModeSwitch" name="chorusModeSwitch" checked />
+          <span class="ytmc-slider"></span>
+        </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="ytmc-switch-title">Repeat: </span>
+        <label class="ytmc-repeat-switch">
+          <input type="checkbox" id="repeatSwitch" name="repeatSwitch" checked />
+          <span class="ytmc-slider"></span>
+        </label>
+      </div>
+      <br><br>
       <hr>
       <div class="ytmc-video-info-container">
-        <span class="ytmc-video-title"></span>
+        <div class="ytmc-video-info-container-inner">
+          <span class="ytmc-video-title"></span>
+          <div class="ytmc-playing-indicator"></div>
+          <span class="ytmc-video-author"></span>
+        </div>
       </div>
       <div class="ytmc-controls-container">
         <button id="prevButton" class="ytmc-control-button" title="Previous Song" disabled>
