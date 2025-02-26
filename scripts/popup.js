@@ -148,6 +148,9 @@ function _formatMinutes(time) {
   if (minutes % 60 === 0) {
     minutes = minutes / 60;
   }
+  if (minutes === 0 && Math.ceil(time) >= 60) {
+    minutes = 1;
+  }
   return minutes.toString();
 }
 
@@ -157,7 +160,11 @@ function _formatMinutes(time) {
  * @returns {string} The formatted time
  */
 function _formatSeconds(time) {
-  return (time % 60).toFixed().toString().padStart(2, '0');
+  let seconds = Math.ceil(time % 60).toFixed();
+  if (seconds % 60 === 0) {
+    seconds = 0;
+  }
+  return seconds.toString().padStart(2, '0');
 }
 
 /**
