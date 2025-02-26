@@ -14,6 +14,9 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
 
 - **Chorus Detection**: Detects the chorus of a song and plays the chorus only.
 - Jumps to next song after chorus is played automatically.
+- Manually enabling/disabling chorus detection mode.
+- Loop current song mode.
+- Player controls.
 
 ## Installation
 
@@ -34,6 +37,8 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
 2. The extension will only be enabled on YouTube Music Desktop App and [YouTube Music Web](https://music.youtube.com).
 3. **Tolerance** is seconds to add detected chorus timestamp. Default is 0 seconds, (min = -30, max = 30)
 4. **Chorus Duration** is duration chorus. Default is 60 seconds, (min = 30, max = 90)
+5. **Chorus** is mode of chorus detection. Default is true.
+6. **Repeat** is loop current song. Default is false.
 
 ## Contact
 

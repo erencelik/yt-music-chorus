@@ -12,7 +12,7 @@ const durationText = document.getElementById("durationText");
 
 let tolerance = 0;
 let chorusDuration = 60;
-let chorusMode = false;
+let chorusMode = true;
 let repeat = false;
 let isPlaying = false;
 
@@ -175,7 +175,7 @@ function _initialize() {
   tolerance = localStorage.getItem("tolerance") || 0;
   chorusDuration = localStorage.getItem("chorusDuration") || 60;
   repeat = localStorage.getItem("repeat") === 'true';
-  chorusMode = localStorage.getItem("chorusMode") === 'true';
+  chorusMode = localStorage.getItem("chorusMode") || true;
   isPlaying = localStorage.getItem("isPlaying") === 'true';
 
   toleranceSlider.value = tolerance;
