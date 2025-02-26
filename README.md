@@ -40,6 +40,12 @@ This extension uses **Chrome Developer Tools** protocol to execute scripts as Go
 5. **Chorus** is mode of chorus detection. Default is true.
 6. **Repeat** is loop current song. Default is false.
 
+## Known Issues
+
+- If you want to enable extension functionality then player controls inside extension should be used. 
+Playing songs through YouTube Music's own player will not trigger any features of extension 
+instead extension will only be displaying song information like title, artist, duration, etc.
+
 ## Contact
 
 For any questions or feedback, please contact me at [erencelik.xyz](https://erencelik.xyz).
