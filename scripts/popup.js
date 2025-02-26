@@ -144,7 +144,11 @@ function _setVersionText() {
  * @returns {string} The formatted time
  */
 function _formatMinutes(time) {
-  return `${parseInt(time / 60).toString()}`;
+  let minutes = parseInt(time / 60);
+  if (minutes % 60 === 0) {
+    minutes = minutes / 60;
+  }
+  return minutes.toString();
 }
 
 /**
@@ -153,7 +157,7 @@ function _formatMinutes(time) {
  * @returns {string} The formatted time
  */
 function _formatSeconds(time) {
-  return `${(time % 60).toFixed().toString().padStart(2, '0')}`;
+  return (time % 60).toFixed().toString().padStart(2, '0');
 }
 
 /**
