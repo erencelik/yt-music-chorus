@@ -16,6 +16,10 @@ let _options = { tolerance: 0, chorusDuration: 60, chorusMode: true, repeat: fal
  * @param {Object} options - The options for the chorus
  */
 function setOptions(options) {
+  if (typeof options !== "object" || options == null) {
+    console.log("Options must be an object");
+    return;
+  }
   _options = options;
   console.log(`Options set to: ${JSON.stringify(_options)}`);
 }
@@ -25,13 +29,10 @@ function setOptions(options) {
  * Play the current song
  * @param {Object} options - The options for the chorus
  */
-function play({ tolerance = 0, chorusDuration = 60, chorusMode = true, repeat = false }) {
+function play(options) {
+  setOptions(options);
   _clearIntervals();
   if (_playerApi) {
-    _options.tolerance = tolerance;
-    _options.chorusDuration = chorusDuration;
-    _options.chorusMode = chorusMode;
-    _options.repeat = repeat;
     if (_options.chorusMode) {
       console.log("Chorus mode set to on, playing chorus...");
       _playChorus();
@@ -105,6 +106,14 @@ function isPaused() {
 }
 
 /**
+ * Get the duration of the song
+ * @returns {number} The duration of the song
+ */
+function getDuration() {
+  return _playerApi && _playerApi.getDuration();
+}
+
+/**
  * Get the current time of the player
  * @returns {number} The current time of the player
  */
@@ -121,10 +130,8 @@ function _playChorus() {
     return;
   }
 
-  const { tolerance, chorusDuration, repeat } = _options;
-
   _started = true;
-  console.log(`Tolerance: ${tolerance}, Chorus Duration: ${chorusDuration}, Repeat: ${repeat}`);
+  console.log(`Tolerance: ${_options.tolerance}, Chorus Duration: ${_options.chorusDuration}, Repeat: ${_options.repeat}`);
   _playerApi.pauseVideo();
 
   // load lyrics by clicking it
@@ -135,7 +142,7 @@ function _playChorus() {
 
     const currentTime = getCurrentTime();
 
-    let chorusTimestamps = { chorusStart: currentTime, chorusEnd: currentTime + chorusDuration };
+    let chorusTimestamps = { chorusStart: currentTime, chorusEnd: currentTime + _options.chorusDuration };
 
     const duration = _playerApi.getDuration();
 
@@ -151,7 +158,7 @@ function _playChorus() {
 
       console.log(`Duration: ${duration}s`);
 
-      chorusTimestamps = _calculateChorusTimestamps(lyrics, duration, tolerance, chorusDuration);
+      chorusTimestamps = _calculateChorusTimestamps(lyrics, duration, _options.tolerance, _options.chorusDuration);
 
     }
 
@@ -165,7 +172,7 @@ function _playChorus() {
         _fadeVolume(100, 0);
         setTimeout(() => {
           clearInterval(_chorusIntervalId);
-          if (repeat) {
+          if (_options.repeat) {
             _playerApi.pauseVideo();
             _playerApi.seekTo(chorusTimestamps.chorusStart);
           } else {
@@ -332,7 +339,7 @@ _playerIntervalId = setInterval(() => {
         if (_playerApi) {
           _propagate();
         }
-      }, 500);
+      }, 777);
     }
   }
 }, 100);
@@ -361,7 +368,8 @@ function _propagate() {
     const data = {
       video: videoData,
       isPaused: isPaused(),
-      currentTime: getCurrentTime()
+      currentTime: getCurrentTime(),
+      duration: getDuration()
     }
     const msg = { from: "ytmc", value: data };
     // console.log(`sending message ${JSON.stringify(msg)}`);

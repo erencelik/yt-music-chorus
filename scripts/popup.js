@@ -8,7 +8,7 @@ const playPauseButton = document.getElementById("playPauseButton");
 const nextButton = document.getElementById("nextButton");
 const repeatSwitch = document.getElementById("repeatSwitch");
 const chorusModeSwitch = document.getElementById("chorusModeSwitch");
-const playingIndicator = document.querySelector(".ytmc-playing-indicator");
+const durationText = document.getElementById("durationText");
 
 let tolerance = 0;
 let chorusDuration = 60;
@@ -121,10 +121,8 @@ function _reloadUI() {
   if (appContainer) {
     if (isPlaying) {
       appContainer.classList.add("ytmc-app-animated");
-      playingIndicator.classList.add("active");
     } else {
       appContainer.classList.remove("ytmc-app-animated");
-      playingIndicator.classList.remove("active");
     }
   }
 }
@@ -138,6 +136,24 @@ function _setVersionText() {
   }
   const manifest = chrome.runtime.getManifest();
   document.querySelector(".ytmc-version-text").textContent = `v${manifest.version}`;
+}
+
+/**
+ * Format the minutes
+ * @param {number} time - The time to format
+ * @returns {string} The formatted time
+ */
+function _formatMinutes(time) {
+  return `${parseInt(time / 60).toString()}`;
+}
+
+/**
+ * Format the seconds
+ * @param {number} time - The time to format
+ * @returns {string} The formatted time
+ */
+function _formatSeconds(time) {
+  return `${(time % 60).toFixed().toString().padStart(2, '0')}`;
 }
 
 /**
@@ -212,7 +228,7 @@ function _initialize() {
     const port = chrome.runtime.connect({ name: "ytmc-popup-channel" });
     port.onMessage.addListener((message) => {
       if (message.action === "ytmcUpdate" && message.data) {
-        const { video, isPaused, currentTime } = message.data;
+        const { video, isPaused, currentTime, duration } = message.data;
         if (isPlaying === isPaused) {
           isPlaying = !isPaused;
           _reloadUI();
@@ -223,12 +239,19 @@ function _initialize() {
         if (videoAuthor.textContent !== video.author) {
           videoAuthor.textContent = video.author;
         }
+        if (duration) {
+          const currentTimeString = `${_formatMinutes(currentTime)}:${_formatSeconds(currentTime)}`;
+          const durationString = `${_formatMinutes(duration)}:${_formatSeconds(duration)}`;
+          durationText.style.display = "block";
+          durationText.textContent = `${currentTimeString} / ${durationString}`;
+        } else {
+          durationText.style.display = "none";
+        }
       }
     });
     _reloadUI();
-    _setOptions();
   } else {
-    document.querySelector(".ytmc-container").style.display = "block";
+    document.querySelector(".ytmc-container").style.display = "none";
     document.querySelector(".ytmc-error").style.display = "block";
   }
   _setVersionText();
