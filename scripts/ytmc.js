@@ -187,7 +187,7 @@ function _calculateChorusTimestamps(lyrics, duration, tolerance, chorusDuration)
     // Base calculation using line timing
     chorusStart = Math.max(0, (chorusFirstOccurrenceIndex * avgLineDuration));
     // Check if calculated chorus start time is outside typical range
-    if (chorusStart < duration * 0.2 || chorusStart > duration * 0.6) {
+    if (chorusStart < duration * 0.1 || chorusStart > duration * 0.6) {
       chorusStart = duration * 0.25; // Use 25% mark as fallback
       console.log(`Chorus timing outside typical range, using fallback start time: ${chorusStart}s`);
     }
@@ -201,7 +201,7 @@ function _calculateChorusTimestamps(lyrics, duration, tolerance, chorusDuration)
 
   console.log(`Calculated chorus start time: ${chorusStart}s`);
 
-  chorusEnd = chorusStart + chorusDuration;
+  chorusEnd = Math.min(duration, chorusStart + chorusDuration);
 
   return { chorusStart, chorusEnd };
 }
