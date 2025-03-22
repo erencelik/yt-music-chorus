@@ -4,7 +4,7 @@
 </p>
 <hr/>
 
-**YT Music Chorus** is a Chrome Extension that enhances your YouTube Music experience by only playing choruses then jumping to next song repeatedly.
+**YT Music Chorus** is an unofficial Chrome Extension that enhances your YouTube Music experience by giving chorus detection/playing and major player abilities to user.
 
 ## ⚠️ Warning
 
